@@ -7,6 +7,8 @@ src/oled_opv_lab/cli.py
 src/oled_opv_lab/colours.py
 src/oled_opv_lab/core.py
 src/oled_opv_lab/models.py
+src/oled_opv_lab/opv.py
+src/oled_opv_lab/opv_ui.py
 src/oled_opv_lab/solvation.py
 src/oled_opv_lab/visuals.py
 src/oled_opv_lab.egg-info/PKG-INFO
@@ -15,7 +17,11 @@ src/oled_opv_lab.egg-info/dependency_links.txt
 src/oled_opv_lab.egg-info/entry_points.txt
 src/oled_opv_lab.egg-info/requires.txt
 src/oled_opv_lab.egg-info/top_level.txt
+src/oled_opv_lab/data/SOURCE.txt
+src/oled_opv_lab/data/am15g.csv
+src/oled_opv_lab/data/pvlib_LICENSE.txt
 tests/test_app.py
 tests/test_localization.py
+tests/test_opv.py
 tests/test_peak.py
 tests/test_physics.py

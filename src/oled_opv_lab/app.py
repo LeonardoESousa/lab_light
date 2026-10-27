@@ -10,6 +10,7 @@ from oled_opv_lab.models import OrbitalParameters, solve, composition, minimum_f
 from oled_opv_lab.solvation import localization_properties, HC, response, emission_energy, emission_peak, emission_sigma, sigma_to_fwhm, TEMPERATURE_K, gaussian_energy, wavelength_spectrum
 from oled_opv_lab.colours import spectrum_to_color, scale_emission_color, vial_svg
 from oled_opv_lab.visuals import orbital_density_figure
+from oled_opv_lab.opv_ui import opv_activity
 
 LABELS = ['H−1', 'H', 'L', 'L+1']
 
@@ -212,11 +213,13 @@ def main():
     st.set_page_config(page_title='Molecular Light Lab',page_icon='🧪',layout='wide')
     st.title('Molecular Light Lab')
     st.caption('OLEDs & OPVs · Explore molecular properties, predict an outcome, then test it.')
-    first,second=st.tabs(['Singlet-triplet gaps','Solvatochromism'])
+    first,second,third=st.tabs(['Singlet-triplet gaps','Solvatochromism','OPV · Harvest sunlight'])
     with first:
         orbital_activity()
     with second:
         solvation_activity()
+    with third:
+        opv_activity(style)
     st.caption('Teaching models · version 0.1.0 · Saved attempts persist only during your current browser session. Download them before leaving.')
 
 

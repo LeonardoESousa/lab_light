@@ -83,7 +83,31 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(initial['layout']['yaxis']['range'],dark['layout']['yaxis']['range'])
         for curve in dark['data']:
             self.assertTrue(np.all(values(curve['y'])==0))
-        self.assertEqual(at.metric[-1].value,'0.000')
+        self.assertEqual(next(m.value for m in at.metric if m.label=='Relative emission strength'),'0.000')
         at.slider(key='solv_theta_l').set_value(0.).run()
         self.assertFalse(at.exception)
-        self.assertEqual(at.metric[-1].value,'1.000')
+        self.assertEqual(next(m.value for m in at.metric if m.label=='Relative emission strength'),'1.000')
+
+
+class OPVAppTests(unittest.TestCase):
+    def test_opv_controls_and_saved_attempts(self):
+        at=AppTest.from_file(str(APP),default_timeout=30).run()
+        self.assertFalse(at.exception)
+        def metric(label):return next(m.value for m in at.metric if m.label==label)
+        photons=metric('Absorbed photons / m²/s')
+        power=metric('Power score / W/m²')
+        at.slider(key='opv_offset').set_value(0.).run()
+        self.assertFalse(at.exception)
+        self.assertEqual(metric('Absorbed photons / m²/s'),photons)
+        self.assertEqual(metric('Power score / W/m²'),'0.00')
+        at.slider(key='opv_offset').set_value(.3).run()
+        self.assertEqual(metric('Power score / W/m²'),power)
+        at.slider(key='opv_gap').set_value(2.5).run()
+        self.assertFalse(at.exception)
+        self.assertNotEqual(metric('Absorbed photons / m²/s'),photons)
+        at.button(key='opv_save').click().run()
+        self.assertEqual(len(at.session_state['opv_attempts']),1)
+        self.assertEqual(at.session_state['opv_attempts'][0]['Donor peak / eV'],2.5)
+        at.button(key='opv_clear').click().run()
+        self.assertFalse(at.exception)
+        self.assertEqual(at.session_state['opv_attempts'],[])

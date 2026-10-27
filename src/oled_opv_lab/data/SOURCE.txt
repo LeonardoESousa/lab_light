@@ -1,0 +1,8 @@
+ASTM G173-03 AM1.5 global total spectral irradiance on a 37-degree tilted surface.
+Units: wavelength nm; irradiance W m^-2 nm^-1.
+Official source: https://www.nlr.gov/grid/solar-resource/spectra-am1.5
+Retrieved 2026-10-27 from pvlib 0.16.1 distribution, pvlib/data/ASTMG173.csv; only the wavelength and global columns are retained verbatim.
+Documentation: https://pvlib-python.readthedocs.io/en/stable/reference/generated/pvlib.spectrum.get_reference_spectra.html
+The pvlib distribution license is included as pvlib_LICENSE.txt.
+Original table SHA256: 91964ac23c0ec82dbbda4a7f160a5f5faf551dfe18ffae7e2446d74b57ee7859
+Bundled two-column table SHA256: a3b13c8e8b4ad237c8818a506a3cf6847ccc41f05fb49e77a066f42f9bae5e36
