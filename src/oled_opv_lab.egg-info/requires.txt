@@ -1,0 +1,10 @@
+numpy<3,>=1.24
+scipy<2,>=1.10
+pandas<3,>=2
+plotly<7,>=5.18
+streamlit<2,>=1.49
+colour-science<0.5,>=0.4.4
+
+[dev]
+pytest>=8
+build>=1

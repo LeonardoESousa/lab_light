@@ -1,0 +1,2 @@
+[console_scripts]
+oled-opv-lab = oled_opv_lab.cli:main

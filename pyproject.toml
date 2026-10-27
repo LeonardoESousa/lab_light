@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "oled-opv-lab"
+version = "0.1.0"
+description = "Interactive molecular photophysics activities for OLED and OPV teaching"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24,<3", "scipy>=1.10,<2", "pandas>=2,<3", "plotly>=5.18,<7", "streamlit>=1.49,<2", "colour-science>=0.4.4,<0.5"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "build>=1"]
+
+[project.scripts]
+oled-opv-lab = "oled_opv_lab.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

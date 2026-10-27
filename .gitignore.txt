@@ -1,0 +1,9 @@
+.lab-env/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.streamlit/secrets.toml
