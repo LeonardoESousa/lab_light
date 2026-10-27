@@ -5,6 +5,24 @@ import numpy as np
 HC = 1239.8419843320026  # eV nm
 KB_EV = 8.617333262145e-5  # eV K^-1
 TEMPERATURE_K = 300.0
+CHI_MAX_EV = 1.25
+
+
+def localization_properties(theta_homo, theta_lumo, chi_max=CHI_MAX_EV):
+    """Map D/A localization to a similarity proxy, chi and relative strength.
+
+    O=|u_H dot u_L|²=cos²(theta_H-theta_L), with u=(cos(theta),sin(theta)).
+    This compares fragment descriptors, not actual orthogonal MO overlaps.
+    The mappings chi=chi_max*(1-O), I_rel=O are pedagogical assumptions.
+    """
+    if not np.all(np.isfinite([theta_homo, theta_lumo, chi_max])):
+        raise ValueError('Localization parameters must be finite.')
+    if not (0 <= theta_homo <= 90 and 0 <= theta_lumo <= 90) or chi_max < 0:
+        raise ValueError('Angles must be between 0 and 90 degrees; chi_max must be nonnegative.')
+    overlap = float(np.clip(np.cos(np.radians(theta_homo-theta_lumo))**2, 0, 1))
+    if overlap < 1e-14:
+        overlap = 0.
+    return dict(overlap=overlap, chi=chi_max*(1-overlap), strength=overlap)
 
 
 @dataclass(frozen=True)
@@ -61,6 +79,20 @@ def sigma_to_fwhm(sigma):
     if not np.isfinite(sigma) or sigma <= 0:
         raise ValueError('Sigma must be positive and finite.')
     return float(2*np.sqrt(2*np.log(2))*sigma)
+
+
+def emission_peak(energy_centre, sigma, wavelength_axis=False):
+    """Return eV/nm for the same maximum on the selected spectral-density axis.
+
+    I_lambda = E²/(hc) I_E: its maximum obeys E²-mu*E-2*sigma²=0.
+    Therefore simply relabeling hc/mu as a wavelength peak would be incorrect.
+    """
+    if not np.all(np.isfinite([energy_centre,sigma])) or energy_centre<=0 or sigma<=0:
+        raise ValueError('Energy centre and sigma must be positive and finite.')
+    e=float(energy_centre)
+    if wavelength_axis:
+        e=.5*(e+float(np.hypot(e,np.sqrt(8)*sigma)))
+    return e, HC/e
 
 
 def gaussian_energy(energy, peak, fwhm):

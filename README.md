@@ -1,133 +1,37 @@
 # Molecular Light Lab
 
-## Solvent-linewidth patch (apply after the activity refinement patch)
+Requires **Python 3.10 or newer** and an internet connection for installation.
 
-The solvent factors are now αst=(εs−1)/(εs+1) and αopt=(n²−1)/(n²+1). The refractive-index control starts at 1.4; the static dielectric control starts at 2 and ends at 20. Static response must remain at least as large as optical response.
+Download or clone the repository, then open a terminal in the folder containing `pyproject.toml` and `launch.py`.
 
-At a fixed 300 K, the Gaussian standard deviation in eV is σ=sqrt[(kBT)²+2χ(αst−αopt)kBT], using kB=8.617333262145×10⁻⁵ eV/K. FWHM=2sqrt(2ln2)σ. There is no independent linewidth slider. Each comparison molecule receives its own calculated width; the vacuum spectrum uses αst=αopt=0, so σvac=kBT. CSV exports include sigma, FWHM, temperature and response parameters. Integrated energy-domain intensity remains fixed.
+## Quick start
 
-The vial integrates the full wavelength spectrum, including the calculated linewidth, through the existing CIE/sRGB pipeline. Broadening at a fixed peak therefore affects colour (usually lower saturation, with a possible hue change), not just the plotted curve. Brightness remains normalized; this is not a quantitative colour-purity or quantum-yield prediction.
+```sh
+python launch.py
+```
 
-The linewidth relation is a phenomenological teaching model for positive solvent sensitivity. A negative solvatochromic χ is not generally a valid reorganization/broadening parameter: invalid energies or nonpositive variances show an explanation, and invalid comparison curves are omitted with a notice. No absolute value or arbitrary variance clipping is applied. To model negative solvatochromism with broadening more generally, use a separate nonnegative reorganization parameter rather than equating it with signed χ.
+This installs the package in its own environment and opens the app in your browser. Use the same command for subsequent launches and after updating the source.
 
-Tab 1 now explains that θ describes donor/acceptor localization amplitudes, not a geometry torsion: PD=cos²θ, PA=sin²θ. At 0°, 45° and 90° the donor population is 100%, 50% and 0%; at 30° it is 75%.
+## Install manually
 
-Apply this incremental patch from the project root, then restart `python launch.py` (or reinstall with `python -m pip install .`). The original bundled wheel remains unchanged; rebuild it before wheel-only redistribution.
-
-## Activity refinement patch
-
-The revised activity initializes all four angles randomly once per session, with no named arrangements. A Randomize angles button starts a new trial without resetting ordinary slider interactions.
-
-Both actual lowest excited roots must retain at least 80% H→L weight to qualify for the gap challenge or appear in its angle map. Total single-excitation weight is insufficient: an H−1→L state could also be 100% single. Root labels remain energy ordered; a higher H→L root is not renamed S1 or T1.
-
-The controls now start with ε(H)−ε(H−1)=0.5 eV. Neighboring occupied and virtual spacings are bounded below by 2Kmax+0.05 eV. In this model, bare singlet gaps contain +2Kia; differences in these exchange corrections can reach 2Kmax. This floor protects bare H→L ordering against competing single configurations. It is not a guarantee of correlated state character, which is checked directly after CISD. Increasing the H–L gap alone does not separate H−1→L from H→L, because both share the same L orbital.
-
-The level diagram shows only S1, S2 and T1 and zooms its vertical range to these levels. The energy zero still uses correlated S0. Orbital-population and emission-spectrum legends are outside their plots.
-
-After applying the patch from the project root with `git apply molecular_light_lab_activity_fixes.patch`, restart with `python launch.py`. The launcher now detects source changes and installs the updated source instead of reusing the old wheel. A standard installation can instead be updated with `python -m pip install .`, followed by `oled-opv-lab`. The original bundled wheel is unchanged; rebuild it with `python -m build --wheel` before redistributing a wheel-only installation.
-
-A Python package containing a Streamlit dashboard for an OLED/OPV teaching session. The first release contains two activity tabs: four-orbital spin-adapted CISD and solvatochromism. No hosting account or external API is needed to run locally.
-
-## Install and run
-
-Requires Python 3.10 or newer. Unzip this project, open a terminal in this directory, and run:
+If you already have a Python environment:
 
 ```sh
 python -m pip install .
 oled-opv-lab
 ```
 
-The command opens the dashboard in a browser. It runs from any working directory after installation. Server options can be appended, for example:
+Alternatively, launch with:
 
 ```sh
-oled-opv-lab --server.port 8502 --server.headless true
+python -m oled_opv_lab.cli
 ```
 
-Alternatively install the wheel supplied in `dist` using `python -m pip install path/to/oled_opv_lab-0.1.0-py3-none-any.whl`. Dependencies still need to be downloaded unless already installed.
-
-## Automatic environment creation
-
-With Python installed, run `python launch.py` from the unzipped project. This creates a private `.lab-env`, installs the bundled wheel and dependencies on first launch, and opens the dashboard. Subsequent launches reuse the environment. There is no manual environment creation or activation. Initial setup requires internet. This does not bundle the Python interpreter itself.
-
-### With uv
-
-If uv is installed, this command creates/manages an isolated environment automatically, downloading Python if needed:
+After downloading newer source code, reinstall and run:
 
 ```sh
-uvx --python 3.11 --from ./dist/oled_opv_lab-0.1.0-py3-none-any.whl oled-opv-lab
+python -m pip install --upgrade .
+oled-opv-lab
 ```
 
-This requires uv and network access on the first run. The wheel is a Python package, not a bundled Python interpreter. Do not copy a virtual environment between different computers.
-
-For students who should install nothing, deploy once and share the URL through DTU Learn.
-
-## Hosting
-
-### Streamlit Community Cloud
-
-Push the contents of this project to a GitHub repository. Select `streamlit_app.py` as the entrypoint and Python 3.11. The root `requirements.txt` installs the local package and its dependencies. Deploy from the project root, not from the parent folder containing this project. Share the resulting app URL in DTU Learn. Deployment has not been performed by this deliverable.
-
-### A university server
-
-Install the package in a managed environment and run:
-
-```sh
-oled-opv-lab --server.address 0.0.0.0 --server.port 8501 --server.headless true
-```
-
-Use the university's normal HTTPS reverse proxy and access controls. Test expected classroom concurrency. Student attempts are kept in per-session Streamlit state, not a shared database.
-
-## Activity 1: four-orbital CISD
-
-- Independent localization angles for H−1, H, L and L+1: 0 degrees is donor, 90 degrees is acceptor. Donor and acceptor populations are cos²θ and sin²θ.
-- Initial occupied spacing is 0.5 eV; H−1 is −0.2528 eV, H–L spacing is 3.026 eV and L–(L+1) spacing is 0.5759 eV. Controls maintain ordering and neighboring-orbital isolation, with a HOMO–LUMO gap up to 10 eV.
-- Adjustable Kmax and cross-fragment interaction λ.
-- Spin-adapted CISD diagonalization: 15 singlet CSFs (reference, 4 singles, 10 doubles) and 11 triplet CSFs (4 singles, 7 doubles).
-- S1, S2 and T1 levels, signed ΔEST, state compositions, orbital populations, saved attempts, CSV export, and an optional angle map.
-- Challenge minimizes the absolute ST gap; signed values remain visible to identify inversion. Both S1 and T1 must retain at least 80% H→L character. The map masks points failing this criterion or the singlet-ground-state condition. Energies are ordered roots, not states tracked by overlap.
-
-The engine is adapted from the user's earlier `four_orbital_state_gaps.py` (version 7) and `cisd_gap_angle_scan.py` (version 4), retrieved on 2026-10-26. It preserves that effective Hamiltonian convention: exchange-only configuration blocks, full localization-dependent off-block couplings, and reference–single elements set to zero. It is a qualitative effective model, not an ab-initio Hamiltonian or full CI. Triples/quadruples, direct Coulomb differences and orbital relaxation are omitted. The localization vectors are descriptors, not four orthogonal orbitals in a two-dimensional basis. Later coupling-only discussions are not silently substituted for this archived CISD model.
-
-All excitation energies are measured relative to correlated S0. The gap is E(S1)−E(T1). A triplet below S0 triggers a warning and is ineligible. Reference weight and state compositions expose changes in character.
-
-## Activity 2: solvatochromism
-
-The user-specified energy model is
-
-Esol = Evac − χ(2αst − αopt).
-
-The solvent convention is αst=(εs−1)/(εs+1) and αopt=(n²−1)/(n²+1). α is dimensionless and χ is in eV. Both direct response controls and dielectric/refractive-index controls are available. The model enforces αst≥αopt (equivalently εs≥n²). If controls violate this inequality, the effective static response is raised to the optical response and the app explains the adjustment.
-
-Five fictional molecule presets plus a custom molecule are provided. Three share Evac but have different positive χ, one has a lower Evac, and one has negative χ. No preset is an experimental fit or a chemically identified emitter.
-
-The Gaussian is defined as a density per eV with thermally calculated sigma at 300 K, as described above. Wavelength spectra include the Jacobian hc/λ². Consequently hc/Ecentre labels the energy centre, not necessarily the maximum of the wavelength-density curve. Spectra are updated on every change and downloadable as CSV; optional overlays compare vacuum and other molecules. Integrated energy-domain intensity is constant; quantum yield, aggregation and specific interactions are not modeled.
-
-### Vial colour provenance
-
-The locally installed `nemoview.visualization.FluorescentVialPlotter.spectrum_to_color` was inspected directly. Its wavelength sorting, visible-range interpolation, colour-science CIE XYZ, D65 weighting and sRGB pipeline are adapted in `colours.py`. XYZ scale and linear-RGB normalization are corrected before encoding to avoid white clipping, inputs are not mutated, and invisible tails do not get artificially amplified. The SVG vial keeps fixed proportions, replacing axes-relative patch geometry. This is adapted code, not a byte-for-byte copy of the earlier fix. Exact historical fix source was not available.
-
-D65 weighting is retained for continuity with NEMOview. It is an illustrative display mapping rather than a calibrated emission measurement. `spectrum_to_color(..., legacy_d65=False)` uses equal-energy illumination (no wavelength-dependent illuminant weighting) for an emission-only mapping. Vial brightness is normalized and cannot be compared as photon yield.
-
-## Extend the dashboard
-
-Scientific functions live in `models.py`, `solvation.py` and `colours.py`; UI code is in `app.py`. Add each new activity as a function and tab in `main()`. Models can be imported without starting Streamlit.
-
-## Checks and development
-
-```sh
-python -m pip install -e ".[dev]"
-python -m pytest
-python -m build
-```
-
-The tests also run without pytest using `python -m unittest discover -s tests -v` after installation. Tests cover spin basis dimensions and orthogonality, Hamiltonian symmetry, noninteracting excitation limits, energy-zero invariance, localization/coupling limits, solvatochromic shifts and spectral Jacobians, colour stability, and Streamlit interactions. The test suite intentionally focuses on scientific correctness and working interactions.
-
-## Suggested questions
-
-1. Explore localization continuously. When does the lowest excited-state character change?
-2. Can a low ST gap alone demonstrate efficient delayed fluorescence? Which rates/properties are missing?
-3. For equal Evac, rank χ from the shifts in the same pair of solvents.
-4. Can two emitters have the same colour in one solvent but different responses in another?
-5. Why does a Gaussian in energy become asymmetric in wavelength?
-
-This release does not yet include a separate OPV charge-separation activity.
+Press **Ctrl+C** in the terminal to stop the app.

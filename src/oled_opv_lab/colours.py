@@ -37,6 +37,16 @@ def spectrum_to_color(wavelengths_nm, intensities, legacy_d65=True):
     return tuple(int(round(x*255)) for x in rgb)
 
 
+def scale_emission_color(rgb, strength):
+    """Scale linear-light display brightness without renormalizing it away."""
+    if not np.isfinite(strength) or not 0 <= strength <= 1:
+        raise ValueError('Relative emission strength must lie in [0, 1].')
+    srgb = np.asarray(rgb, float)/255
+    linear = colour.cctf_decoding(srgb, function='sRGB')
+    scaled = colour.cctf_encoding(linear*strength, function='sRGB')
+    return tuple(int(round(v*255)) for v in np.clip(scaled,0,1))
+
+
 def vial_svg(rgb):
     """Fixed viewBox keeps cap, liquid and outline proportional at every size."""
     r, g, b = (int(np.clip(c, 0, 255)) for c in rgb)

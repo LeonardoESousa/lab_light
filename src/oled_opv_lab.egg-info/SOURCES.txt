@@ -8,6 +8,7 @@ src/oled_opv_lab/colours.py
 src/oled_opv_lab/core.py
 src/oled_opv_lab/models.py
 src/oled_opv_lab/solvation.py
+src/oled_opv_lab/visuals.py
 src/oled_opv_lab.egg-info/PKG-INFO
 src/oled_opv_lab.egg-info/SOURCES.txt
 src/oled_opv_lab.egg-info/dependency_links.txt
@@ -15,4 +16,6 @@ src/oled_opv_lab.egg-info/entry_points.txt
 src/oled_opv_lab.egg-info/requires.txt
 src/oled_opv_lab.egg-info/top_level.txt
 tests/test_app.py
+tests/test_localization.py
+tests/test_peak.py
 tests/test_physics.py
